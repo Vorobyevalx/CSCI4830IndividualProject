@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.vorobyevalx.workoutlogger.WorkoutLoggerApplicationTests" time="5.718" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.vorobyevalx.workoutlogger.controller.WorkoutControllerTest" time="1.108" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -46,7 +46,7 @@
     <property name="localRepository" value="/Users/vorobyevalx/.m2/repository"/>
     <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
     <property name="java.io.tmpdir" value="/var/folders/cg/66zttrrj345794jkxhrk04hc0000gn/T/"/>
-    <property name="com.zaxxer.hikari.pool_number" value="1"/>
+    <property name="com.zaxxer.hikari.pool_number" value="2"/>
     <property name="java.version" value="17.0.9"/>
     <property name="user.dir" value="/Users/vorobyevalx/Desktop/Introduction Software Engineer/CSCI4830IndividualProject/workout-logger-backend"/>
     <property name="os.arch" value="x86_64"/>
@@ -62,9 +62,9 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="contextLoads" classname="com.vorobyevalx.workoutlogger.WorkoutLoggerApplicationTests" time="0.672">
-    <system-out><![CDATA[19:53:28.375 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.vorobyevalx.workoutlogger.WorkoutLoggerApplicationTests]: WorkoutLoggerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-19:53:28.474 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.vorobyevalx.workoutlogger.WorkoutLoggerApplication for test class com.vorobyevalx.workoutlogger.WorkoutLoggerApplicationTests
+  <testcase name="testGetAllWorkouts" classname="com.vorobyevalx.workoutlogger.controller.WorkoutControllerTest" time="0.212">
+    <system-out><![CDATA[2025-10-28T19:53:33.933-05:00  INFO 78393 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.vorobyevalx.workoutlogger.controller.WorkoutControllerTest]: WorkoutControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-10-28T19:53:33.962-05:00  INFO 78393 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.vorobyevalx.workoutlogger.WorkoutLoggerApplication for test class com.vorobyevalx.workoutlogger.controller.WorkoutControllerTest
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -74,28 +74,37 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.0)
 
-2025-10-28T19:53:28.982-05:00  INFO 78393 --- [           main] c.v.w.WorkoutLoggerApplicationTests      : Starting WorkoutLoggerApplicationTests using Java 17.0.9 with PID 78393 (started by vorobyevalx in /Users/vorobyevalx/Desktop/Introduction Software Engineer/CSCI4830IndividualProject/workout-logger-backend)
-2025-10-28T19:53:28.983-05:00  INFO 78393 --- [           main] c.v.w.WorkoutLoggerApplicationTests      : No active profile set, falling back to 1 default profile: "default"
-2025-10-28T19:53:29.813-05:00  INFO 78393 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-10-28T19:53:29.866-05:00  INFO 78393 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 49 ms. Found 1 JPA repository interface.
-2025-10-28T19:53:30.572-05:00  INFO 78393 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-10-28T19:53:30.613-05:00  INFO 78393 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.3.1.Final
-2025-10-28T19:53:30.632-05:00  INFO 78393 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-10-28T19:53:30.799-05:00  INFO 78393 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-10-28T19:53:30.827-05:00  INFO 78393 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-10-28T19:53:31.253-05:00  INFO 78393 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@3a0896b3
-2025-10-28T19:53:31.256-05:00  INFO 78393 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-28T19:53:34.019-05:00  INFO 78393 --- [           main] c.v.w.controller.WorkoutControllerTest   : Starting WorkoutControllerTest using Java 17.0.9 with PID 78393 (started by vorobyevalx in /Users/vorobyevalx/Desktop/Introduction Software Engineer/CSCI4830IndividualProject/workout-logger-backend)
+2025-10-28T19:53:34.020-05:00  INFO 78393 --- [           main] c.v.w.controller.WorkoutControllerTest   : No active profile set, falling back to 1 default profile: "default"
+2025-10-28T19:53:34.267-05:00  INFO 78393 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-28T19:53:34.287-05:00  INFO 78393 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 1 JPA repository interface.
+2025-10-28T19:53:34.416-05:00  INFO 78393 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-28T19:53:34.423-05:00  INFO 78393 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-28T19:53:34.427-05:00  INFO 78393 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-28T19:53:34.428-05:00  INFO 78393 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-10-28T19:53:34.429-05:00  INFO 78393 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.sqlite.jdbc4.JDBC4Connection@627ad446
+2025-10-28T19:53:34.430-05:00  INFO 78393 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
 Hibernate: create table HTE_workouts(due_date date, rn_ integer not null, id bigint, hib_sess_id char(36) not null, description varchar(1000), exercise_name varchar(255), priority varchar(255), status varchar(255), primary key (rn_, hib_sess_id))
-2025-10-28T19:53:31.872-05:00  INFO 78393 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-Hibernate: create table workouts_seq (next_val bigint)
-Hibernate: insert into workouts_seq values ( 1 )
-2025-10-28T19:53:31.903-05:00  INFO 78393 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-10-28T19:53:32.509-05:00  WARN 78393 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-10-28T19:53:33.155-05:00  INFO 78393 --- [           main] c.v.w.WorkoutLoggerApplicationTests      : Started WorkoutLoggerApplicationTests in 4.566 seconds (process running for 5.65)
+2025-10-28T19:53:34.477-05:00  INFO 78393 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-28T19:53:34.482-05:00  INFO 78393 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-28T19:53:34.627-05:00  WARN 78393 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-28T19:53:34.761-05:00  INFO 78393 --- [           main] c.v.w.controller.WorkoutControllerTest   : Started WorkoutControllerTest in 0.794 seconds (process running for 7.255)
+2025-10-28T19:53:34.777-05:00  INFO 78393 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-10-28T19:53:34.779-05:00  INFO 78393 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-10-28T19:53:34.786-05:00  INFO 78393 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+Hibernate: select next_val as id_val from workouts_seq
+Hibernate: update workouts_seq set next_val= ? where next_val=?
+Hibernate: insert into workouts (description,due_date,exercise_name,priority,status,id) values (?,?,?,?,?,?)
+Hibernate: select w1_0.id,w1_0.description,w1_0.due_date,w1_0.exercise_name,w1_0.priority,w1_0.status from workouts w1_0
 ]]></system-out>
   </testcase>
-  <testcase name="testWorkoutEntity" classname="com.vorobyevalx.workoutlogger.WorkoutLoggerApplicationTests" time="0.021">
-    <system-out><![CDATA[Workout created successfully: Workout{id=null, exerciseName='Morning Run', description='5K run in the park', dueDate=2025-10-29, status=PLANNED, priority=HIGH}
+  <testcase name="testCreateWorkout" classname="com.vorobyevalx.workoutlogger.controller.WorkoutControllerTest" time="0.047">
+    <system-out><![CDATA[2025-10-28T19:53:34.989-05:00  INFO 78393 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-10-28T19:53:34.989-05:00  INFO 78393 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-10-28T19:53:34.990-05:00  INFO 78393 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+Hibernate: select next_val as id_val from workouts_seq
+Hibernate: update workouts_seq set next_val= ? where next_val=?
+Hibernate: insert into workouts (description,due_date,exercise_name,priority,status,id) values (?,?,?,?,?,?)
 ]]></system-out>
   </testcase>
 </testsuite>

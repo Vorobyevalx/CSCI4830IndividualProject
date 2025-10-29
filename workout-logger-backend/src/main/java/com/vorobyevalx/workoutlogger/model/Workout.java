@@ -1,6 +1,7 @@
 package com.vorobyevalx.workoutlogger.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 
 @Entity
@@ -8,16 +9,18 @@ import java.time.LocalDate;
 public class Workout {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
     @Column(name = "exercise_name", nullable = false)
+    @JsonProperty("exerciseName")
     private String exerciseName;
     
     @Column(name = "description", length = 1000)
     private String description;
     
     @Column(name = "due_date")
+    @JsonProperty("dueDate")
     private LocalDate dueDate;
     
     @Enumerated(EnumType.STRING)
