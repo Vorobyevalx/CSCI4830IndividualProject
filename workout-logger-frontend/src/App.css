@@ -1,3 +1,7 @@
+html {
+  font-size: 20px; /* +2px bump from previous 18px */
+}
+
 /* Reset and base styles */
 * {
   margin: 0;
@@ -11,9 +15,18 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   color: #333;
+  /* full-page honeycomb background */
+  background-color: #140b06;
+  background-image:
+    radial-gradient(1200px 800px at 20% 10%, rgba(255,180,60,0.15), transparent 60%),
+    radial-gradient(900px 700px at 80% 70%, rgba(255,120,30,0.15), transparent 60%),
+    linear-gradient(30deg, rgba(255,182,25,0.65) 12%, transparent 12.5%, transparent 87%, rgba(255,182,25,0.65) 87.5%, rgba(255,182,25,0.65)),
+    linear-gradient(150deg, rgba(255,182,25,0.65) 12%, transparent 12.5%, transparent 87%, rgba(255,182,25,0.65) 87.5%, rgba(255,182,25,0.65)),
+    linear-gradient(90deg, rgba(255,182,25,0.75) 2px, transparent 2px);
+  background-size: 48px 83px, 48px 83px, 48px 48px, 100% 100%, 100% 100%;
+  background-position: 0 0, 24px 41.5px, 0 0, 0 0, 0 0;
 }
 
 .app {
@@ -21,6 +34,18 @@ body {
   margin: 0 auto;
   padding: 20px;
   min-height: 100vh;
+  position: relative;
+}
+
+/* glossy highlight overlay like honey glaze across full page */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(800px 500px at 30% 0%, rgba(255,255,255,0.08), transparent 60%),
+              radial-gradient(600px 400px at 80% 100%, rgba(255,165,0,0.06), transparent 60%);
+  z-index: 0;
 }
 
 /* Header */
@@ -208,6 +233,12 @@ body {
   min-height: 80px;
 }
 
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
 .form-actions {
   display: flex;
   gap: 15px;
@@ -225,6 +256,78 @@ body {
   padding: 30px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
+  border: 2px solid #000;
+}
+
+/* Program header */
+.program-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.program-header h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.program-description {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Workout day sections */
+.workout-day-section {
+  margin-bottom: 50px;
+}
+
+.day-title { /* legacy style kept if used elsewhere */ }
+
+/* Large Day toggle button */
+.day-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  margin: 0 0 20px 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: 0;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.day-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.day-toggle.open {
+  background: linear-gradient(135deg, #5a6fe8, #6e4aa1);
+}
+
+.day-toggle-title {
+  text-align: left;
+}
+
+.day-toggle-icon {
+  font-size: 1.2rem;
 }
 
 .no-workouts {
@@ -237,23 +340,292 @@ body {
 /* Workouts grid */
 .workouts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 30px;
 }
 
-/* Workout card */
+/* Workout cards - Flip card container */
 .workout-card {
-  background: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  border: 1px solid #f0f0f0;
+  background: transparent;
+  border-radius: 16px;
+  height: 450px;
+  perspective: 1000px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  position: relative;
 }
 
 .workout-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px) rotateX(5deg) rotateY(2deg);
+}
+
+.workout-card.flipped {
+  transform: translateY(-8px) rotateX(5deg);
+}
+
+.workout-card.flipped .card-front {
+  transform: rotateY(180deg);
+}
+
+.workout-card.flipped .card-back {
+  transform: rotateY(0deg);
+}
+
+.workout-card:hover .card-front,
+.workout-card:hover .card-back {
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Card front and back */
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.25), 
+    rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-front {
+  border-left: 4px solid #667eea;
+  background: linear-gradient(135deg, 
+    rgba(102, 126, 234, 0.1), 
+    rgba(255, 255, 255, 0.2));
+  transform: rotateY(0deg);
+}
+
+.card-back {
+  border-left: 4px solid #28a745;
+  background: linear-gradient(135deg, 
+    rgba(40, 167, 69, 0.1), 
+    rgba(255, 255, 255, 0.2));
+  transform: rotateY(180deg);
+}
+
+/* Animated gradient borders */
+.workout-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  padding: 2px;
+  background: linear-gradient(45deg, 
+    #667eea, #764ba2, #f093fb, #f5576c, 
+    #4facfe, #00f2fe, #43e97b, #38f9d7,
+    #667eea);
+  background-size: 400% 400%;
+  animation: gradientShift 3s ease infinite;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  z-index: -1;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Flip hints */
+.flip-hint, .flip-back-hint {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.flip-back-hint {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+/* Tracking content on card back */
+.tracking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tracking-header h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.tracking-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tracking-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tracking-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* Weight input */
+.weight-input {
+  padding: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  color: #333;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.weight-input:focus {
+  outline: none;
+  border-color: rgba(40, 167, 69, 0.6);
+  background: rgba(255, 255, 255, 0.3);
+  color: #333;
+  box-shadow: 
+    0 8px 24px rgba(40, 167, 69, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Counter controls */
+.counter-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.counter-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.counter-btn.plus {
+  background: linear-gradient(135deg, 
+    rgba(40, 167, 69, 0.8), 
+    rgba(32, 201, 151, 0.8));
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.counter-btn.minus {
+  background: linear-gradient(135deg, 
+    rgba(220, 53, 69, 0.8), 
+    rgba(255, 87, 108, 0.8));
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.counter-btn:hover {
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.counter-btn:active {
+  transform: scale(1.05) translateY(0);
+}
+
+.counter-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Progress section */
+.progress-section {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+  font-weight: 600;
 }
 
 .workout-header {
@@ -263,8 +635,8 @@ body {
   margin-bottom: 15px;
 }
 
-.workout-header h3 {
-  font-size: 1.3rem;
+.workout-header h4 {
+  font-size: 1.2rem;
   font-weight: 700;
   color: #333;
   margin: 0;
@@ -294,6 +666,36 @@ body {
   line-height: 1.6;
   margin-bottom: 15px;
   font-size: 0.95rem;
+}
+
+/* Workout details */
+.workout-details {
+  margin-bottom: 20px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: #333;
+  font-size: 0.9rem;
+  text-align: right;
 }
 
 .workout-date {
@@ -345,12 +747,28 @@ body {
     gap: 10px;
   }
   
+  .workout-header h4 {
+    font-size: 1.1rem;
+  }
+  
   .workout-badges {
     align-self: flex-start;
   }
   
   .form-actions {
     flex-direction: column;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .day-title {
+    font-size: 1.4rem;
+  }
+  
+  .program-header h2 {
+    font-size: 1.8rem;
   }
 }
 

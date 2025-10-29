@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +62,14 @@ public class WorkoutController {
             workout.setDueDate(workoutDetails.getDueDate());
             workout.setStatus(workoutDetails.getStatus());
             workout.setPriority(workoutDetails.getPriority());
+            workout.setWorkoutDay(workoutDetails.getWorkoutDay());
+            workout.setSets(workoutDetails.getSets());
+            workout.setReps(workoutDetails.getReps());
+            workout.setEquipment(workoutDetails.getEquipment());
+            workout.setMuscleGroups(workoutDetails.getMuscleGroups());
+            workout.setActualWeight(workoutDetails.getActualWeight());
+            workout.setCompletedReps(workoutDetails.getCompletedReps());
+            workout.setCompletedSets(workoutDetails.getCompletedSets());
             
             Workout updatedWorkout = workoutRepository.save(workout);
             return ResponseEntity.ok(updatedWorkout);

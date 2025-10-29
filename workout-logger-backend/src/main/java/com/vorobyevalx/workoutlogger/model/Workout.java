@@ -47,6 +47,18 @@ public class Workout {
     @Column(name = "muscle_groups")
     @JsonProperty("muscleGroups")
     private String muscleGroups;
+
+    @Column(name = "actual_weight")
+    @JsonProperty("actualWeight")
+    private Double actualWeight;
+
+    @Column(name = "completed_reps")
+    @JsonProperty("completedReps")
+    private Integer completedReps;
+
+    @Column(name = "completed_sets")
+    @JsonProperty("completedSets")
+    private Integer completedSets;
     
     // Default constructor
     public Workout() {
@@ -150,6 +162,30 @@ public class Workout {
     public void setMuscleGroups(String muscleGroups) {
         this.muscleGroups = muscleGroups;
     }
+
+    public Double getActualWeight() {
+        return actualWeight;
+    }
+
+    public void setActualWeight(Double actualWeight) {
+        this.actualWeight = actualWeight;
+    }
+
+    public Integer getCompletedReps() {
+        return completedReps;
+    }
+
+    public void setCompletedReps(Integer completedReps) {
+        this.completedReps = completedReps;
+    }
+
+    public Integer getCompletedSets() {
+        return completedSets;
+    }
+
+    public void setCompletedSets(Integer completedSets) {
+        this.completedSets = completedSets;
+    }
     
     @Override
     public String toString() {
@@ -165,6 +201,9 @@ public class Workout {
                 ", reps='" + reps + '\'' +
                 ", equipment='" + equipment + '\'' +
                 ", muscleGroups='" + muscleGroups + '\'' +
+                ", actualWeight=" + actualWeight +
+                ", completedReps=" + completedReps +
+                ", completedSets=" + completedSets +
                 '}';
     }
 }

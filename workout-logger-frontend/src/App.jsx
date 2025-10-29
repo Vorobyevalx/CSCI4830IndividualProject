@@ -11,13 +11,24 @@ function App() {
   const [error, setError] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [editingWorkout, setEditingWorkout] = useState(null)
+  const [openDays, setOpenDays] = useState(new Set()) //collapsed by default
   const [formData, setFormData] = useState({
     exerciseName: '',
     description: '',
     dueDate: '',
     status: 'PLANNED',
-    priority: 'MEDIUM'
+    priority: 'MEDIUM',
+    workoutDay: '',
+    sets: '',
+    reps: '',
+    equipment: '',
+    muscleGroups: '',
+    actualWeight: '',
+    completedReps: 0,
+    completedSets: 0
   })
+
+  const [flippedCards, setFlippedCards] = useState(new Set())
 
   // Fetch workouts from API
   const fetchWorkouts = async () => {
@@ -66,7 +77,12 @@ function App() {
         description: '',
         dueDate: '',
         status: 'PLANNED',
-        priority: 'MEDIUM'
+        priority: 'MEDIUM',
+        workoutDay: '', 
+        sets: '',
+        reps: '',
+        equipment: '',
+        muscleGroups: ''
       })
       setShowForm(false)
       setEditingWorkout(null)
@@ -85,7 +101,12 @@ function App() {
       description: workout.description || '',
       dueDate: workout.dueDate || '',
       status: workout.status,
-      priority: workout.priority
+      priority: workout.priority,
+      workoutDay: workout.workoutDay || '',
+      sets: workout.sets || '',
+      reps: workout.reps || '',
+      equipment: workout.equipment || '',
+      muscleGroups: workout.muscleGroups || ''
     })
     setShowForm(true)
   }
@@ -112,7 +133,12 @@ function App() {
       description: '',
       dueDate: '',
       status: 'PLANNED',
-      priority: 'MEDIUM'
+      priority: 'MEDIUM',
+      workoutDay: '',
+      sets: '',
+      reps: '',
+      equipment: '',
+      muscleGroups: ''
     })
   }
 
@@ -126,18 +152,145 @@ function App() {
     }
   }
 
-  // Get status color
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'COMPLETED': return '#44aa44'
-      case 'IN_PROGRESS': return '#ffaa00'
-      case 'PLANNED': return '#666666'
-      default: return '#666666'
+  // Group workouts by workout day
+  const groupWorkoutsByDay = (workouts) => {
+    const grouped = workouts.reduce((acc, workout) => {
+      const day = workout.workoutDay || 'Other';
+      if (!acc[day]) {
+        acc[day] = [];
+      }
+      acc[day].push(workout);
+      return acc;
+    }, {});
+    
+    // Sort days in order
+    const dayOrder = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Other'];
+    const sortedGrouped = {};
+    dayOrder.forEach(day => {
+      if (grouped[day]) {
+        sortedGrouped[day] = grouped[day];
+      }
+    });
+    
+    return sortedGrouped;
+  };
+
+  // Get day title based on workout day
+  const getDayTitle = (day) => {
+    const dayTitles = {
+      'Day 1': 'Day 1: Chest, Shoulders & Triceps',
+      'Day 2': 'Day 2: Legs & Core',
+      'Day 3': 'Day 3: Back & Biceps',
+      'Day 4': 'Day 4: Legs & Core',
+      'Day 5': 'Day 5: Complete Upper Body',
+      'Other': 'Other Workouts'
+    };
+    return dayTitles[day] || day;
+  };
+
+  // Toggle Day section open/closed
+  const toggleDay = (day) => {
+    const next = new Set(openDays)
+    if (next.has(day)) {
+      next.delete(day)
+    } else {
+      next.add(day)
     }
+    setOpenDays(next)
   }
 
+  // Get color for status badge
+  const getStatusColor = (status) => {
+    const colors = {
+      'PLANNED': '#6c757d',     // Gray
+      'IN_PROGRESS': '#007bff',  // Blue
+      'COMPLETED': '#28a745'     // Green
+    };
+    return colors[status] || '#6c757d'; // Default gray
+  };
+
+  // Flip card functionality
+  const toggleCardFlip = (workoutId) => {
+    const newFlippedCards = new Set(flippedCards);
+    if (newFlippedCards.has(workoutId)) {
+      newFlippedCards.delete(workoutId);
+    } else {
+      newFlippedCards.add(workoutId);
+    }
+    setFlippedCards(newFlippedCards);
+  };
+
+  // Update rep counter
+  const updateReps = async (workoutId, increment) => {
+    const workout = workouts.find(w => w.id === workoutId);
+    if (!workout) return;
+
+    const newCompletedReps = Math.max(0, (workout.completedReps || 0) + increment);
+    
+    try {
+      const updatedWorkout = {
+        ...workout,
+        completedReps: newCompletedReps
+      };
+      
+      const response = await axios.put(`${API_BASE_URL}/${workoutId}`, updatedWorkout);
+      
+      setWorkouts(workouts.map(w => 
+        w.id === workoutId ? response.data : w
+      ));
+    } catch (error) {
+      console.error('Failed to update reps:', error);
+    }
+  };
+
+  // Update weight
+  const updateWeight = async (workoutId, newWeight) => {
+    const workout = workouts.find(w => w.id === workoutId);
+    if (!workout) return;
+
+    try {
+      const updatedWorkout = {
+        ...workout,
+        actualWeight: parseFloat(newWeight) || 0
+      };
+      
+      const response = await axios.put(`${API_BASE_URL}/${workoutId}`, updatedWorkout);
+      
+      setWorkouts(workouts.map(w => 
+        w.id === workoutId ? response.data : w
+      ));
+    } catch (error) {
+      console.error('Failed to update weight:', error);
+    }
+  };
+
+  // Update completed sets
+  const updateSets = async (workoutId, increment) => {
+    const workout = workouts.find(w => w.id === workoutId);
+    if (!workout) return;
+
+    const newCompletedSets = Math.max(0, Math.min(workout.sets || 0, (workout.completedSets || 0) + increment));
+    
+    try {
+      const updatedWorkout = {
+        ...workout,
+        completedSets: newCompletedSets,
+        // Reset reps to 0 when completing a new set (increment > 0)
+        completedReps: increment > 0 ? 0 : workout.completedReps
+      };
+      
+      const response = await axios.put(`${API_BASE_URL}/${workoutId}`, updatedWorkout);
+      
+      setWorkouts(workouts.map(w => 
+        w.id === workoutId ? response.data : w
+      ));
+    } catch (error) {
+      console.error('Failed to update sets:', error);
+    }
+  };
+
   if (loading) {
-    return (
+  return (
       <div className="app">
         <div className="loading">Loading workouts...</div>
       </div>
@@ -230,6 +383,75 @@ function App() {
                 </select>
               </div>
 
+              <div className="form-group">
+                <label htmlFor="workoutDay">Workout Day</label>
+                <select
+                  id="workoutDay"
+                  name="workoutDay"
+                  value={formData.workoutDay}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Select Day</option>
+                  <option value="Day 1">Day 1: Chest, Shoulders & Triceps</option>
+                  <option value="Day 2">Day 2: Legs & Core</option>
+                  <option value="Day 3">Day 3: Back & Biceps</option>
+                  <option value="Day 4">Day 4: Legs & Core</option>
+                  <option value="Day 5">Day 5: Complete Upper Body</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="sets">Sets</label>
+                  <input
+                    type="number"
+                    id="sets"
+                    name="sets"
+                    value={formData.sets}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="20"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="reps">Reps</label>
+                  <input
+                    type="text"
+                    id="reps"
+                    name="reps"
+                    value={formData.reps}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 8-10, 12-15"
+                  />
+                </div>
+                    )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="equipment">Equipment</label>
+                <input
+                  type="text"
+                  id="equipment"
+                  name="equipment"
+                  value={formData.equipment}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Dumbbells, Bodyweight"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="muscleGroups">Muscle Groups</label>
+                <input
+                  type="text"
+                  id="muscleGroups"
+                  name="muscleGroups"
+                  value={formData.muscleGroups}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Chest, Shoulders, Triceps"
+                />
+              </div>
+
               <div className="form-actions">
                 <button type="submit" className="btn btn-primary">
                   {editingWorkout ? 'Update' : 'Add'} Workout
@@ -249,51 +471,219 @@ function App() {
             <p>No workouts found. Add your first workout to get started!</p>
           </div>
         ) : (
-          <div className="workouts-grid">
-            {workouts.map(workout => (
-              <div key={workout.id} className="workout-card">
-                <div className="workout-header">
-                  <h3>{workout.exerciseName}</h3>
-                  <div className="workout-badges">
-                    <span 
-                      className="priority-badge"
-                      style={{ backgroundColor: getPriorityColor(workout.priority) }}
+          <div className="workout-program">
+            <div className="program-header">
+              <h2>5-Day Dumbbell Workout Split</h2>
+              <p className="program-description">
+                A comprehensive 5-day dumbbell-only workout program perfect for building lean muscle mass at home or on the go. 
+                Each day focuses on specific muscle groups with progressive overload principles.
+        </p>
+      </div>
+            
+                {Object.entries(groupWorkoutsByDay(workouts)).map(([day, dayWorkouts]) => (
+                  <div key={day} className="workout-day-section">
+                    <button
+                      type="button"
+                      className={`day-toggle ${openDays.has(day) ? 'open' : ''}`}
+                      onClick={() => toggleDay(day)}
+                      aria-expanded={openDays.has(day)}
+                      aria-controls={`day-${day}`}
                     >
-                      {workout.priority}
-                    </span>
-                    <span 
-                      className="status-badge"
-                      style={{ backgroundColor: getStatusColor(workout.status) }}
+                      <span className="day-toggle-title">{getDayTitle(day)}</span>
+                      <span className="day-toggle-icon" aria-hidden>
+                        {openDays.has(day) ? '▾' : '▸'}
+                      </span>
+                    </button>
+                    {openDays.has(day) && (
+                      <div id={`day-${day}`} className="workouts-grid">
+                  {dayWorkouts.map(workout => (
+                    <div 
+                      key={workout.id} 
+                      className={`workout-card ${flippedCards.has(workout.id) ? 'flipped' : ''}`}
+                      onClick={() => toggleCardFlip(workout.id)}
                     >
-                      {workout.status.replace('_', ' ')}
-                    </span>
-                  </div>
+                      {/* Front of card */}
+                      <div className="card-front">
+                        <div className="workout-header">
+                          <h4>{workout.exerciseName}</h4>
+                          <div className="workout-badges">
+                            <span 
+                              className="priority-badge"
+                              style={{ backgroundColor: getPriorityColor(workout.priority) }}
+                            >
+                              {workout.priority}
+                            </span>
+                            <span 
+                              className="status-badge"
+                              style={{ backgroundColor: getStatusColor(workout.status) }}
+                            >
+                              {workout.status.replace('_', ' ')}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {workout.description && (
+                          <p className="workout-description">{workout.description}</p>
+                        )}
+                        
+                        <div className="workout-details">
+                          {workout.sets && workout.reps && (
+                            <div className="detail-row">
+                              <span className="detail-label">Sets & Reps:</span>
+                              <span className="detail-value">{workout.sets} x {workout.reps}</span>
+                            </div>
+                          )}
+                          {workout.equipment && (
+                            <div className="detail-row">
+                              <span className="detail-label">Equipment:</span>
+                              <span className="detail-value">{workout.equipment}</span>
+                            </div>
+                          )}
+                          {workout.muscleGroups && (
+                            <div className="detail-row">
+                              <span className="detail-label">Muscle Groups:</span>
+                              <span className="detail-value">{workout.muscleGroups}</span>
+                            </div>
+                          )}
+                          {workout.dueDate && (
+                            <div className="detail-row">
+                              <span className="detail-label">Due Date:</span>
+                              <span className="detail-value">{new Date(workout.dueDate).toLocaleDateString()}</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="workout-actions">
+                          <button 
+                            className="btn btn-small btn-primary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(workout);
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="btn btn-small btn-danger"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(workout.id);
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                        
+                        <div className="flip-hint">
+                          <span>Click to flip for workout tracking</span>
+                        </div>
+                      </div>
+
+                      {/* Back of card - Workout tracking */}
+                      <div className="card-back">
+                        <div className="tracking-header">
+                          <h4>{workout.exerciseName}</h4>
+                          <div className="flip-back-hint">
+                            <span>Click to flip back</span>
+                          </div>
+                        </div>
+                        
+                        <div className="tracking-content">
+                          {/* Weight tracking */}
+                          <div className="tracking-section">
+                            <label className="tracking-label">Weight (lbs)</label>
+                            <input
+                              type="number"
+                              className="weight-input"
+                              value={workout.actualWeight || ''}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                updateWeight(workout.id, e.target.value);
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                              onFocus={(e) => e.stopPropagation()}
+                              placeholder="0"
+                              step="0.5"
+                              min="0"
+                            />
+                          </div>
+
+                          {/* Sets tracking */}
+                          <div className="tracking-section">
+                            <label className="tracking-label">Sets Completed</label>
+                            <div className="counter-controls">
+                              <button 
+                                className="counter-btn minus"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateSets(workout.id, -1);
+                                }}
+                              >
+                                -
+                              </button>
+                              <span className="counter-value">
+                                {workout.completedSets || 0} / {workout.sets || 0}
+                              </span>
+                              <button 
+                                className="counter-btn plus"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateSets(workout.id, 1);
+                                }}
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Reps tracking */}
+                          <div className="tracking-section">
+                            <label className="tracking-label">Reps Completed</label>
+                            <div className="counter-controls">
+                              <button 
+                                className="counter-btn minus"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateReps(workout.id, -1);
+                                }}
+                              >
+                                -
+                              </button>
+                              <span className="counter-value">
+                                {workout.completedReps || 0}
+                              </span>
+                              <button 
+                                className="counter-btn plus"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateReps(workout.id, 1);
+                                }}
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Progress indicator */}
+                          <div className="progress-section">
+                            <div className="progress-bar">
+                              <div 
+                                className="progress-fill"
+                                style={{ 
+                                  width: `${workout.sets ? ((workout.completedSets || 0) / workout.sets) * 100 : 0}%` 
+                                }}
+                              ></div>
+                            </div>
+                            <span className="progress-text">
+                              {workout.sets ? Math.round(((workout.completedSets || 0) / workout.sets) * 100) : 0}% Complete
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                
-                {workout.description && (
-                  <p className="workout-description">{workout.description}</p>
-                )}
-                
-                {workout.dueDate && (
-                  <p className="workout-date">
-                    📅 Due: {new Date(workout.dueDate).toLocaleDateString()}
-                  </p>
-                )}
-                
-                <div className="workout-actions">
-                  <button 
-                    className="btn btn-small btn-primary"
-                    onClick={() => handleEdit(workout)}
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    className="btn btn-small btn-danger"
-                    onClick={() => handleDelete(workout.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
+                    )}
               </div>
             ))}
           </div>
