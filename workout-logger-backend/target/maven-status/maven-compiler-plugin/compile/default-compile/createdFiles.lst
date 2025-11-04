@@ -1,0 +1,8 @@
+com/vorobyevalx/workoutlogger/model/WorkoutStatus.class
+com/vorobyevalx/workoutlogger/model/WorkoutPriority.class
+com/vorobyevalx/workoutlogger/WorkoutLoggerApplication.class
+com/vorobyevalx/workoutlogger/model/Workout.class
+com/vorobyevalx/workoutlogger/controller/WorkoutController.class
+com/vorobyevalx/workoutlogger/config/CorsConfig.class
+com/vorobyevalx/workoutlogger/repository/WorkoutRepository.class
+com/vorobyevalx/workoutlogger/service/DataInitializationService.class
