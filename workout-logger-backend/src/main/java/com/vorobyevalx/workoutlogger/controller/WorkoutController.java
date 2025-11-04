@@ -7,9 +7,10 @@ import com.vorobyevalx.workoutlogger.repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,56 @@ public class WorkoutController {
         List<Workout> workouts = workoutRepository.findAll();
         return ResponseEntity.ok(workouts);
     }
+
+    // Export all workouts as JSON (download)
+    @GetMapping(value = "/export/json")
+    public ResponseEntity<List<Workout>> exportJson() {
+        List<Workout> workouts = workoutRepository.findAll();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=workouts.json");
+        return ResponseEntity.ok().headers(headers).body(workouts);
+    }
+
+    // Export all workouts as CSV (download)
+    @GetMapping(value = "/export/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> exportCsv() {
+        List<Workout> workouts = workoutRepository.findAll();
+        StringBuilder sb = new StringBuilder();
+        sb.append("id,exerciseName,description,dueDate,status,priority,workoutDay,sets,reps,equipment,muscleGroups,actualWeight,completedReps,completedSets\n");
+        for (Workout w : workouts) {
+            sb.append(nullSafe(w.getId())).append(',')
+              .append(csv(w.getExerciseName())).append(',')
+              .append(csv(w.getDescription())).append(',')
+              .append(nullSafe(w.getDueDate())).append(',')
+              .append(nullSafe(w.getStatus())).append(',')
+              .append(nullSafe(w.getPriority())).append(',')
+              .append(csv(w.getWorkoutDay())).append(',')
+              .append(nullSafe(w.getSets())).append(',')
+              .append(csv(w.getReps())).append(',')
+              .append(csv(w.getEquipment())).append(',')
+              .append(csv(w.getMuscleGroups())).append(',')
+              .append(nullSafe(w.getActualWeight())).append(',')
+              .append(nullSafe(w.getCompletedReps())).append(',')
+              .append(nullSafe(w.getCompletedSets()))
+              .append('\n');
+        }
+        byte[] bytes = sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=workouts.csv");
+        headers.setContentType(new MediaType("text","csv"));
+        return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+    }
+
+    private static String csv(String s) {
+        if (s == null) return "";
+        String escaped = s.replace("\"", "\"\"");
+        if (escaped.contains(",") || escaped.contains("\n") || escaped.contains("\r") || escaped.contains("\"")) {
+            return '"' + escaped + '"';
+        }
+        return escaped;
+    }
+
+    private static String nullSafe(Object o) { return o == null ? "" : o.toString(); }
 
     // GET /api/workouts/{id} - Get workout by ID
     @GetMapping("/{id}")
@@ -63,6 +114,14 @@ public class WorkoutController {
             workout.setDueDate(workoutDetails.getDueDate());
             workout.setStatus(workoutDetails.getStatus());
             workout.setPriority(workoutDetails.getPriority());
+            workout.setWorkoutDay(workoutDetails.getWorkoutDay());
+            workout.setSets(workoutDetails.getSets());
+            workout.setReps(workoutDetails.getReps());
+            workout.setEquipment(workoutDetails.getEquipment());
+            workout.setMuscleGroups(workoutDetails.getMuscleGroups());
+            workout.setActualWeight(workoutDetails.getActualWeight());
+            workout.setCompletedReps(workoutDetails.getCompletedReps());
+            workout.setCompletedSets(workoutDetails.getCompletedSets());
             
             Workout updatedWorkout = workoutRepository.save(workout);
             return ResponseEntity.ok(updatedWorkout);

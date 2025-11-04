@@ -30,6 +30,35 @@ public class Workout {
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
     private WorkoutPriority priority;
+
+    @Column(name = "workout_day")
+    @JsonProperty("workoutDay")
+    private String workoutDay;
+
+    @Column(name = "sets")
+    private Integer sets;
+
+    @Column(name = "reps")
+    private String reps;
+
+    @Column(name = "equipment")
+    private String equipment;
+
+    @Column(name = "muscle_groups")
+    @JsonProperty("muscleGroups")
+    private String muscleGroups;
+
+    @Column(name = "actual_weight")
+    @JsonProperty("actualWeight")
+    private Double actualWeight;
+
+    @Column(name = "completed_reps")
+    @JsonProperty("completedReps")
+    private Integer completedReps;
+
+    @Column(name = "completed_sets")
+    @JsonProperty("completedSets")
+    private Integer completedSets;
     
     // Default constructor
     public Workout() {
@@ -93,6 +122,70 @@ public class Workout {
     public void setPriority(WorkoutPriority priority) {
         this.priority = priority;
     }
+
+    public String getWorkoutDay() {
+        return workoutDay;
+    }
+
+    public void setWorkoutDay(String workoutDay) {
+        this.workoutDay = workoutDay;
+    }
+
+    public Integer getSets() {
+        return sets;
+    }
+
+    public void setSets(Integer sets) {
+        this.sets = sets;
+    }
+
+    public String getReps() {
+        return reps;
+    }
+
+    public void setReps(String reps) {
+        this.reps = reps;
+    }
+
+    public String getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(String equipment) {
+        this.equipment = equipment;
+    }
+
+    public String getMuscleGroups() {
+        return muscleGroups;
+    }
+
+    public void setMuscleGroups(String muscleGroups) {
+        this.muscleGroups = muscleGroups;
+    }
+
+    public Double getActualWeight() {
+        return actualWeight;
+    }
+
+    public void setActualWeight(Double actualWeight) {
+        this.actualWeight = actualWeight;
+    }
+
+    public Integer getCompletedReps() {
+        return completedReps;
+    }
+
+    public void setCompletedReps(Integer completedReps) {
+        this.completedReps = completedReps;
+    }
+
+    public Integer getCompletedSets() {
+        return completedSets;
+    }
+
+    public void setCompletedSets(Integer completedSets) {
+        this.completedSets = completedSets;
+    }
     
     @Override
     public String toString() {
@@ -103,6 +196,14 @@ public class Workout {
                 ", dueDate=" + dueDate +
                 ", status=" + status +
                 ", priority=" + priority +
+                ", workoutDay='" + workoutDay + '\'' +
+                ", sets=" + sets +
+                ", reps='" + reps + '\'' +
+                ", equipment='" + equipment + '\'' +
+                ", muscleGroups='" + muscleGroups + '\'' +
+                ", actualWeight=" + actualWeight +
+                ", completedReps=" + completedReps +
+                ", completedSets=" + completedSets +
                 '}';
     }
 }

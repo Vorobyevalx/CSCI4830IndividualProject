@@ -1,4 +1,11 @@
+External IP : 34.29.96.80
+
+git access token: [REDACTED]
+
+
 # Google Cloud E2 Hello World Deployment - Game Plan
+
+
 
 ## Project Goal
 Deploy a simple "Hello World" webpage to a Google Cloud E2 instance and set up version control with GitHub.
@@ -140,37 +147,57 @@ git push -u origin main
 
 ### Step 10: Create a New Project
 1. Go to Google Cloud Console: https://console.cloud.google.com
-2. Click on project dropdown at the top
-3. Click "New Project"
-4. Name it something like "workout-logger" or "hello-world-project"
+2. Click on the project dropdown at the top
+3. Select "New Project"
+4. Enter a Project Name (e.g., `CSCI4830-Project-YourLastName` or `workout-logger-project`)
 5. Click "Create"
+6. Select the newly created project from the dropdown
 
 ### Step 11: Enable Compute Engine API
-1. In the Google Cloud Console, search for "Compute Engine API"
-2. Click "Enable" if it's not already enabled
-3. Wait for it to activate
+1. Navigate to "Compute Engine" in the left menu (or search for it)
+2. Click "Enable" if prompted (API activation may take a few minutes)
+3. You will be redirected to "VM Instances" page
 
-### Step 12: Create E2 Instance
+### Step 12: Create Firewall Rule for Port 8000
+**Important: Do this BEFORE creating your instance**
+
+1. In the Search Bar at the top, type "Firewall"
+2. Select "VPC network" > "Firewall"
+3. Click "Create Firewall Rule"
+4. Configure the rule:
+   - **Name**: `web8000` (or similar)
+   - **Targets**: All instances in the network
+   - **Source IPv4 ranges**: `0.0.0.0/0`
+   - **Protocols and ports**: 
+     - Select "Specified protocols and ports"
+     - Check "TCP"
+     - Enter `8000` in the port field
+5. Click "Create"
+
+### Step 13: Create E2 Instance
 1. Navigate to "Compute Engine" > "VM instances"
 2. Click "Create Instance"
 3. Configure the instance:
-   - **Name**: `hello-world-vm` or `workout-logger-vm`
+   - **Name**: `csci4830-server-yourLastName` (e.g., `csci4830-server-smith`)
    - **Region**: Choose one close to you (e.g., `us-central1`)
    - **Zone**: Keep default
    - **Machine configuration**: 
-     - Series: E2
-     - Machine type: `e2-micro` (cheapest option, enough for Hello World)
+     - Click "General Purpose"
+     - Series: Select "E2" (low cost, day-to-day computing)
+     - Machine type: `e2-medium` or `e2-small`
    - **Boot disk**: 
+     - In the Left Menu, click "OS and Storage"
      - Click "Change"
-     - OS: Ubuntu
-     - Version: Ubuntu 22.04 LTS
+     - Operating System: Ubuntu
+     - Version: Ubuntu 22.04 LTS (x86/64) - **Do NOT select Minimal**
      - Boot disk type: Standard persistent disk
-     - Size: 10 GB (default is fine)
+     - Size: 30 GB
      - Click "Select"
-   - **Firewall**: 
-     - ✅ Allow HTTP traffic
-     - ✅ Allow HTTPS traffic
-4. Click "Create"
+   - **Networking**: 
+     - In the Left Menu, click "Networking"
+     - ✅ Check "Allow HTTP traffic"
+     - ✅ Check "Allow HTTPS traffic"
+4. Scroll down and click "Create"
 5. Wait for the instance to start (green checkmark)
 
 ### Step 13: Note Your External IP
