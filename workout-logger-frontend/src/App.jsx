@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './App.css'
 
-// API base URL
-const API_BASE_URL = 'http://localhost:8080/api/workouts'
+// API base URL - uses relative path for production (Nginx proxy), or set to 'http://localhost:8080/api/workouts' for local dev
+const API_BASE_URL = '/api/workouts'
 
 function App() {
   const [workouts, setWorkouts] = useState([])
@@ -301,12 +301,26 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>🏋️ Workout Logger</h1>
-        <button 
-          className="btn btn-primary"
-          onClick={() => setShowForm(true)}
-        >
-          + Add Workout
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => window.open('/api/workouts/export/csv', '_self')}
+          >
+            Export CSV
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => window.open('/api/workouts/export/json', '_self')}
+          >
+            Export JSON
+          </button>
+          <button 
+            className="btn btn-primary"
+            onClick={() => setShowForm(true)}
+          >
+            + Add Workout
+          </button>
+        </div>
       </header>
 
       {error && (
@@ -425,7 +439,6 @@ function App() {
                     placeholder="e.g., 8-10, 12-15"
                   />
                 </div>
-                    )}
               </div>
 
               <div className="form-group">
@@ -458,7 +471,7 @@ function App() {
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={handleCancel}>
                   Cancel
-                </button>
+        </button>
               </div>
             </form>
           </div>
